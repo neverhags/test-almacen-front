@@ -49,10 +49,8 @@ export const ProductPage = () => {
   
   return (
     <div className='flex justify-center items-start min-w-[100%] h-[100vh] min-h-[100vh]'>
-      {loading?
-      <Spinner/>
-      :<Product product={product}/>
-      }
+      {loading&&<Spinner/>}
+      {!loading&&<Product product={product}/>}
     </div>
   )
 }

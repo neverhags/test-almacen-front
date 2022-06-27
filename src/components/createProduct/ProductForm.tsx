@@ -1,6 +1,7 @@
 import React, {ChangeEvent, useState, useEffect, EventHandler, FormEvent} from 'react'
+import { idText } from 'typescript';
 import { getCategoryList, getCategory } from '../../helpers/categoryHelpers';
-import { postProduct } from '../../helpers/productHelpers';
+import { patchProduct, postProduct } from '../../helpers/productHelpers';
 import { CategoryType, PropertyType } from '../../types/types';
 import { Spinner } from '../Spinner';
 import { ProductCategoryInput } from './ProductCategoryInput';
@@ -16,6 +17,10 @@ interface formValuesInterface {
   category:CategoryType|any,
   properties:Array<any>
 }
+
+interface ProductFormProps{
+  product?:any
+}
 const initialState:formValuesInterface = { name: "", brand: "", description:'', price: "", category:'',properties:[] };
 const initialCategory:CategoryType = {
   _id:'',
@@ -25,14 +30,15 @@ const initialCategory:CategoryType = {
   properties:[],
   __v:0
 }
-export const ProductForm = () => {
+export const ProductForm = (props:ProductFormProps) => {
+  const {product}=props
   const [formValues, setFormValues] = useState<formValuesInterface>(initialState)
   const [categories, setCategories] = useState<Array<CategoryType>>([])
   const [category, setCategory] = useState<CategoryType>(initialCategory)
   const [loading, setLoading] = useState(true)
 
+
   useEffect(() => {
-  
     const fetchCategories = async()=>{
       const categoriesList = await getCategoryList()
       if(categoriesList[0]!==undefined){
@@ -40,10 +46,12 @@ export const ProductForm = () => {
       }
       setLoading(false)
     }
-
     fetchCategories()
+  if(product._id.length>0){
+    setFormValues({name: product.name, brand: product.brand, description:product.description, price: product.price, category:product.category,properties:product.properties})
+  }
     
-  }, [])
+  }, [product])
 
   useEffect(() => {
     const fetchCategory = async()=>{
@@ -66,7 +74,11 @@ const formSubmit = async(event:any) => {
       brand: formValues.brand,
       price: Number.parseInt(formValues.price)
     }
-  await postProduct(productData)
+    if(product._id!==''){
+      patchProduct({...productData,_id:product._id})
+    }else{
+      await postProduct(productData)
+    }
 }
   
 

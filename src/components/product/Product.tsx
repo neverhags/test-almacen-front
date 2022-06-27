@@ -1,10 +1,13 @@
 import React from 'react'
+import {useNavigate} from 'react-router-dom'
 
 interface ProductProps {
   product?: any;
 }
 
 export const Product = (props:ProductProps) => {
+
+  const navigate=useNavigate()
 
   const {_id,
     name,
@@ -16,7 +19,9 @@ export const Product = (props:ProductProps) => {
     margin,
     __v}=props.product
 
-    console.log(properties)
+    const handleClick = ()=>{
+      navigate(`/edit/${_id}`)
+    }
 
   return (
     <div className='mt-4 boxShado w-[80%] min-h-[80%] boxShadow bg-gray-100'>
@@ -36,6 +41,7 @@ export const Product = (props:ProductProps) => {
         </section>
         <section>
           <span className='text-xl'>Price: ${price}{margin}</span>
+          <button onClick={handleClick} className='p-4 rounded text-white bg-blue-500'>Edit</button>
         </section>
       </div>
     </div>
